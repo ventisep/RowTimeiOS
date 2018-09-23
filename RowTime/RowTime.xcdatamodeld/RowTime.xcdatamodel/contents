@@ -1,4 +1,59 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="Test1.xcdatamodel" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14135" systemVersion="17G65" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="CDCrew" representedClassName=".CDCrew" syncable="YES">
+        <attribute name="category" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cox" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="crewName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="crewNumber" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="crewScheduledTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="division" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="elapsedTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="endTimeLocal" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="inProgress" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="picFile" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rowerCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="stage" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="event" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDEvent" inverseName="crews" inverseEntity="CDEvent" syncable="YES"/>
+        <relationship name="rowers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDRower" inverseName="crew" inverseEntity="CDRower" syncable="YES"/>
+        <relationship name="times" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CDRecordedTime" inverseName="crew" inverseEntity="CDRecordedTime" syncable="YES"/>
+    </entity>
+    <entity name="CDEvent" representedClassName=".CDEvent" syncable="YES">
+        <attribute name="eventDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="eventDesc" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="eventId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="eventImage" optional="YES" attributeType="Transformable" valueTransformerName="" syncable="YES"/>
+        <attribute name="eventName" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="crews" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDCrew" inverseName="event" inverseEntity="CDCrew" syncable="YES"/>
+        <relationship name="stages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDStage" inverseName="event" inverseEntity="CDStage" syncable="YES"/>
+    </entity>
+    <entity name="CDRecordedTime" representedClassName=".CDRecordedTime" syncable="YES">
+        <attribute name="crewNumber" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="eventId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="obsType" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="stage" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="timeId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="crew" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDCrew" inverseName="times" inverseEntity="CDCrew" syncable="YES"/>
+    </entity>
+    <entity name="CDRower" representedClassName=".CDRower" syncable="YES">
+        <attribute name="club" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pic" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="rowerId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rowerName" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="crew" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDCrew" inverseName="rowers" inverseEntity="CDCrew" syncable="YES"/>
+    </entity>
+    <entity name="CDStage" representedClassName=".CDStage" syncable="YES">
+        <attribute name="label" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stageIndex" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="event" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDEvent" inverseName="stages" inverseEntity="CDEvent" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="CDCrew" positionX="72" positionY="-1287" width="128" height="268"/>
+        <element name="CDEvent" positionX="-216" positionY="-1305" width="128" height="148"/>
+        <element name="CDRecordedTime" positionX="97" positionY="-937" width="128" height="163"/>
+        <element name="CDRower" positionX="414" positionY="-1233" width="128" height="133"/>
+        <element name="CDStage" positionX="-153" positionY="-970" width="128" height="88"/>
+    </elements>
 </model>
