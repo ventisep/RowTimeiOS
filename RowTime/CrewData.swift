@@ -25,7 +25,6 @@ class CrewData: NSObject {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext
 
-/* Swift 3 broke the Core Data stuff somehow - research PV */
  
         // read all the crews for the selected event from CoreData if nil then set status
         // to "no local data"
@@ -37,7 +36,7 @@ class CrewData: NSObject {
         } catch {
             self.status = "no local data"
         }
- /**/
+
         if cdCrews == [] {
 
             let rc: UIRefreshControl = viewController.refreshControl!
@@ -80,7 +79,7 @@ class CrewData: NSObject {
             print("Analytics: \(String(describing: object)) or \(String(describing: error))")
             if object != nil { //the object has a return value
                 let resp = object as! GTLRObservedtimes_RowTimePackageCrewList
-                print ("resp.crews: \(resp.crews)")
+                print ("resp.crews: \(String(describing: resp.crews))")
                 if (error == nil && resp.crews != nil) {
                     //got the list now create array of Crew objects
 
@@ -98,7 +97,7 @@ class CrewData: NSObject {
                     _ = service!.executeQuery(timesquery, completionHandler: {(ticket: GTLRServiceTicket?, object: Any?, error: Error?)-> Void in
                         print("Analytics: \(String(describing: object)) or \(String(describing: error))")
                         let resp2 : GTLRObservedtimes_RowTimePackageObservedTimeList = object as! GTLRObservedtimes_RowTimePackageObservedTimeList
-                        print ("resp2.times: \(resp2.times)")
+                        print ("resp2.times: \(String(describing: resp2.times))")
                         if (resp2.lastTimestamp != nil){ viewController.lastTimestamp = (resp2.lastTimestamp?.stringValue)!}
                         if (error == nil && resp2.times != nil) {
                             //now we have the times we can process each one against the crews they belong to

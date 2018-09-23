@@ -26,7 +26,7 @@ NSString * const kGTLRAuthScopeObservedtimesUserinfoEmail = @"https://www.google
   self = [super init];
   if (self) {
     // From discovery.
-    self.rootURLString = @"https://None/_ah/api/";
+    self.rootURLString = @"https://rowtime-26.appspot.com/_ah/api/";
     self.servicePath = @"observedtimes/v1/";
     self.batchPath = @"batch";
     self.prettyPrintQueryParameterNames = @[ @"prettyPrint" ];
