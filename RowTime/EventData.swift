@@ -17,9 +17,9 @@ import CoreData
 
 class EventData: NSObject {
     
-    var events : GTLRObservedtimes_RowTimePackageEventList?
+    var events : [Event] = [Event]()
 
-    func loadEvents(_ viewController: EventTableViewController) {
+    func loadEvents(delegate: EventTableViewController) {
         //PV: a method for loading Events from the internet server if available
         // if not successful it will set the status to .
         // get user defaults to store the event list in
@@ -33,31 +33,31 @@ class EventData: NSObject {
         
         let query = GTLRObservedtimesQuery_EventList.query()
 
-        service.executeQuery(query, completionHandler: {(ticket: GTLRServiceTicket?, object: Any?, error: Error?) -> Void in
+        service.executeQuery(query, completionHandler: {[weak self] (ticket: GTLRServiceTicket?, object: Any?, error: Error?) -> Void in
             print("Analytics: \(object ?? String(describing:error))")
             if object != nil, error == nil {
-                let resp : GTLRObservedtimes_RowTimePackageEventList = object as! GTLRObservedtimes_RowTimePackageEventList
+                let resp = object as! GTLRObservedtimes_RowTimePackageEventList
                 if resp.events != nil {
                     for event in resp.events! {
-                        viewController.events.append(Event(fromServerEvent: event ))
+                        self?.events.append(Event(fromServerEvent: event ))
                     }
                     print ("resp.events: \(String(describing: resp.events))")
                     
                     // Archive it to NSData
-                    let data = NSKeyedArchiver.archivedData(withRootObject: viewController.events)
+                    let data = NSKeyedArchiver.archivedData(withRootObject: self!.events)
                     userDefaults.set(data, forKey: "Events")
                     userDefaults.synchronize()
-                } else {
+                } else { //there were no events so take from local data
                     let data = userDefaults.object(forKey: "Events") as! Data
-                    viewController.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
+                    self?.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
                 }
-                viewController.tableView.reloadData()
-            } else { //object returned is nil - no events returned from the server
+            } else { //object returned is nil - no events returned from the server but no error so take from local data
                 let data = userDefaults.object(forKey: "Events") as! Data
-                viewController.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
+                self?.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
             }
-            
+            delegate.refreshFromModel()
         })
+        
     }
     
 }

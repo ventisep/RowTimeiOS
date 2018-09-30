@@ -139,7 +139,7 @@ class RowTimeCoreData: NSObject {
             // find the crewnumber that matches time.crewNumber and process the time
             
             for crew in crews where crew.crewNumber == Int(time.crew!) {
-                crew.processTime(time as! GTLRObservedtimes_RowTimePackageObservedTime)
+                crew.processTime(time)
             }
         }
 }

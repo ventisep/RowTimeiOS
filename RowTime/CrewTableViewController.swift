@@ -168,8 +168,8 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating {
         // Pass the selected object to the new view controller.
         if segue.identifier == "ShowTimes" {
         
-        let timerViewController = segue.destination as! TimerViewController
-        
+            let timerViewController = segue.destination as! TimerViewController
+            
             // Get the cell that generated this segue.
             if let selectedCrewCell = sender as? CrewTableViewCell {
             
@@ -204,6 +204,11 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating {
         
         crewData.refresh(self, eventId: self.eventId, sender: sender)
         
+    }
+    
+    private func UpdateFromModel(){
+        //TODO PV a method to update the data on the screen from the model crewdata model.
+        crewData.refresh(self, eventId: self.eventId, sender: self.refreshControl!)
     }
     
     @IBAction func Sort(_ sender: UIBarButtonItem) {

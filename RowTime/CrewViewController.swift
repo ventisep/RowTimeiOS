@@ -21,9 +21,9 @@ class CrewViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     @IBOutlet weak var crewNameTextField: UITextField!
     @IBOutlet weak var crewOarImageField: UIImageView!
     @IBOutlet weak var crewNumberTextField: UITextField!
-    @IBOutlet weak var crewCategoryTextField: UITextField!
     @IBOutlet weak var crewScheduledTimeTextField: UITextField!
  
+
     @IBOutlet weak var crewCategoryPicker: UIPickerView!
     @IBOutlet var crewCategoryCollection: [UIPickerView]!
     @IBOutlet weak var saveButton: UIBarButtonItem!
@@ -38,8 +38,8 @@ class CrewViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         crewNameTextField.delegate = self
         crewNumberTextField.delegate = self
 
-        crewCategoryPicker.delegate = self
-        crewCategoryPicker.dataSource = self
+        crewCategoryPicker?.delegate = self
+        crewCategoryPicker?.dataSource = self
         
         pickerCategoryData = [[" ","W"],["NOV","IM1","IM2","IM3","J14","J15","J16","J18","ELI"],["1","2","3","4","8"],["X+","X-","+","-"]]
         
@@ -96,7 +96,7 @@ class CrewViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     
     // The data to return for the row and component (column) that's being passed in
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        crewCategoryTextField.text = pickerCategoryData![component][row]
+
         return pickerCategoryData![component][row]
     }
     

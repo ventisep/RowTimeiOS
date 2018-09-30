@@ -39,12 +39,9 @@ class CrewData: NSObject {
 
         if cdCrews == [] {
 
-            let rc: UIRefreshControl = viewController.refreshControl!
-            self.refresh(viewController, eventId: eventId, sender: rc)
+            self.refresh(viewController, eventId: eventId, sender: viewController.refreshControl!)
         }
-        
-
-        viewController.tableView.reloadData()
+    
     }
     
     //PV: a method for loading Crews from the Backend.  This refresh is a delta refresh.  If the crews and times
@@ -96,20 +93,22 @@ class CrewData: NSObject {
                     
                     _ = service!.executeQuery(timesquery, completionHandler: {(ticket: GTLRServiceTicket?, object: Any?, error: Error?)-> Void in
                         print("Analytics: \(String(describing: object)) or \(String(describing: error))")
-                        let resp2 : GTLRObservedtimes_RowTimePackageObservedTimeList = object as! GTLRObservedtimes_RowTimePackageObservedTimeList
-                        print ("resp2.times: \(String(describing: resp2.times))")
-                        if (resp2.lastTimestamp != nil){ viewController.lastTimestamp = (resp2.lastTimestamp?.stringValue)!}
-                        if (error == nil && resp2.times != nil) {
-                            //now we have the times we can process each one against the crews they belong to
+                        if object != nil { //the object has a return value
+                            let resp2 : GTLRObservedtimes_RowTimePackageObservedTimeList = object as! GTLRObservedtimes_RowTimePackageObservedTimeList
+                            print ("resp2.times: \(String(describing: resp2.times))")
+                            if (resp2.lastTimestamp != nil){ viewController.lastTimestamp = (resp2.lastTimestamp?.stringValue)!}
+                            if (error == nil && resp2.times != nil) {
+                                //now we have the times we can process each one against the crews they belong to
                             
-                            self.processTimes(resp2, crews: crews)
-                            viewController.crews = crews
+                                self.processTimes(resp2, crews: crews)
+                                viewController.crews = crews
                             
-                            // create an Object to save to NSUserDefaults.  This has to be an NSData objects so convert my Crew object array to NSData
-                            let data : Data = NSKeyedArchiver.archivedData(withRootObject: crews)
-                            // save to NSUserDefaults with a key of the eventId, this is unique
-                            userDefaults.set(data, forKey: eventId)
-                            userDefaults.synchronize()
+                                // create an Object to save to NSUserDefaults.  This has to be an NSData objects so convert my Crew object array to NSData
+                                let data : Data = NSKeyedArchiver.archivedData(withRootObject: crews)
+                                // save to NSUserDefaults with a key of the eventId, this is unique
+                                userDefaults.set(data, forKey: eventId)
+                                userDefaults.synchronize()
+                            }
                         }
                         viewController.tableView.reloadData()
                     } )
