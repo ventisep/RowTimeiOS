@@ -15,11 +15,17 @@
 import Foundation
 import CoreData
 
+protocol UpdateableFromModel {
+    func didUpdateModel()
+    func willUpdateModel()
+}
+
 class EventData: NSObject {
     
     var events : [Event] = [Event]()
+    var delegate : UpdateableFromModel?
 
-    func loadEvents(delegate: EventTableViewController) {
+    func loadEvents() {
         //PV: a method for loading Events from the internet server if available
         // if not successful it will set the status to .
         // get user defaults to store the event list in
@@ -35,6 +41,7 @@ class EventData: NSObject {
 
         service.executeQuery(query, completionHandler: {[weak self] (ticket: GTLRServiceTicket?, object: Any?, error: Error?) -> Void in
             print("Analytics: \(object ?? String(describing:error))")
+            self!.delegate?.willUpdateModel()
             if object != nil, error == nil {
                 let resp = object as! GTLRObservedtimes_RowTimePackageEventList
                 if resp.events != nil {
@@ -55,7 +62,7 @@ class EventData: NSObject {
                 let data = userDefaults.object(forKey: "Events") as! Data
                 self?.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
             }
-            delegate.refreshFromModel()
+            self!.delegate?.didUpdateModel()
         })
         
     }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EventTableViewController: UITableViewController {
+class EventTableViewController: UITableViewController, UpdateableFromModel {
 
     // MARK: Properties
     
@@ -20,7 +20,8 @@ class EventTableViewController: UITableViewController {
         
         //starts a search for event data and sets this view as the delegate for the refresh call
         
-        eventData.loadEvents(delegate: self)
+        eventData.delegate = self
+        eventData.loadEvents()
 
     }
 
@@ -132,9 +133,23 @@ class EventTableViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     
-    func refreshFromModel(){
+    
+    @IBOutlet weak var refreshMarker: UIRefreshControl!
+    @IBAction func refreshControl(_ sender: Any) {
+
+        eventData.loadEvents()
+        
+    }
+    
+    func willUpdateModel(){
+        //called by EventData when it is abbout to update the list of events
+        refreshMarker.beginRefreshing()
+    }
+    
+    func didUpdateModel(){
         //called by EventData when it has new data to provide
         self.tableView.reloadData()
+        refreshMarker.endRefreshing()
     }
 
 }

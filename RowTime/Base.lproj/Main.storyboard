@@ -359,7 +359,22 @@
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" red="1" green="0.68414163149999996" blue="0.65396559040000002" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+                        <attributedString key="attributedTitle">
+                            <fragment content="Getting Events">
+                                <attributes>
+                                    <font key="NSFont" metaFont="smallSystem"/>
+                                    <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                </attributes>
+                            </fragment>
+                        </attributedString>
+                        <connections>
+                            <action selector="refreshControl:" destination="a4M-V9-5A4" eventType="valueChanged" id="tgP-r1-EH5"/>
+                        </connections>
                     </refreshControl>
+                    <connections>
+                        <outlet property="refreshControl" destination="xcb-sv-7Wv" id="Xab-vG-GTV"/>
+                        <outlet property="refreshMarker" destination="xcb-sv-7Wv" id="zGg-gJ-7tI"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DdX-Zu-sdb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
