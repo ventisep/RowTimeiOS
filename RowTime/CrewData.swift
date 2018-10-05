@@ -14,9 +14,11 @@ class CrewData: NSObject {
     
     var status: String = "error"
     var errorNumber: Int = 0
-    var cdCrews: [CDCrew] = []
+    var crews: [Crew] = []
+    var delegate: UpdateableFromModel?
+    var lastTimestamp: String = "1990-01-01T00:00:00.000"  //first time set ot old date to get everything
     
-    func initialLoad(_ viewController: CrewTableViewController, eventId: String) {
+    func initialLoad(eventId: String) {
         
         //PV: This method will get data from CoreData store if available and then
         // update it with data from the backend if there is a connection
@@ -29,17 +31,17 @@ class CrewData: NSObject {
         // read all the crews for the selected event from CoreData if nil then set status
         // to "no local data"
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName : "CDCrew")
-        let querystring = "event.eventId ='"+viewController.eventId+"'"
+        let querystring = "event.eventId ='"+eventId+"'"
         fetchRequest.predicate = NSPredicate(format: querystring)
         do {
-            cdCrews = try managedContext.fetch(fetchRequest) as! [CDCrew]
+            crews = try managedContext.fetch(fetchRequest) as! [Crew]
         } catch {
             self.status = "no local data"
         }
 
-        if cdCrews == [] {
-
-            self.refresh(viewController, eventId: eventId, sender: viewController.refreshControl!)
+        if crews == [] {
+            status = "no local data"
+            refreshCrews(eventId: eventId)
         }
     
     }
@@ -49,19 +51,9 @@ class CrewData: NSObject {
     // times since the last request.  Crew are only retrieved the first time (this means we cannot add crews
     // half way through the race.  To change this we would have to put a lastTimestamp on the crew table.
     
-    func refresh(_ viewController: CrewTableViewController, eventId: String, sender: UIRefreshControl) {
+    func refreshCrews(eventId: String) {
         
-        sender.beginRefreshing()
-        let userDefaults = UserDefaults.standard
-        var crews: [Crew] = [Crew]()
-        var firstTime: Bool = false
-        if viewController.lastTimestamp == "1990-01-01T00:00:00.000" {firstTime = true} else {firstTime = false}
-        
-        if !firstTime {
-            crews = viewController.crews  //set crews to current list
-        }
-
-        
+        delegate?.willUpdateModel()
         var service : GTLRObservedtimesService? = nil
         if service == nil {
             service = GTLRObservedtimesService()
@@ -70,9 +62,12 @@ class CrewData: NSObject {
         }
         
         let query = GTLRObservedtimesQuery_CrewList.query()
-        query.eventId = viewController.eventId
+        query.eventId = eventId
     
-        _ = service!.executeQuery(query, completionHandler: {(ticket: GTLRServiceTicket?, object: Any?, error: Error?)-> Void in
+        _ = service!.executeQuery(query,
+                                  completionHandler: {(ticket: GTLRServiceTicket?,
+                                    object: Any?,
+                                    error: Error?)-> Void in
             print("Analytics: \(String(describing: object)) or \(String(describing: error))")
             if object != nil { //the object has a return value
                 let resp = object as! GTLRObservedtimes_RowTimePackageCrewList
@@ -83,43 +78,49 @@ class CrewData: NSObject {
                     for GLTCrew in resp.crews! {
                         print("Crew as GTL: \(GLTCrew)")
                         let crew = Crew(fromServerCrew: GLTCrew , eventId: eventId)
-                        crews.append(crew)
+                        self.crews.append(crew)
                     }
-
-                    // now we have the crews we can get the times
-                    let timesquery = GTLRObservedtimesQuery_TimesListtimes.query()
-                    timesquery.eventId = viewController.eventId
-                    timesquery.lastTimestamp = viewController.lastTimestamp
-                    
-                    _ = service!.executeQuery(timesquery, completionHandler: {(ticket: GTLRServiceTicket?, object: Any?, error: Error?)-> Void in
-                        print("Analytics: \(String(describing: object)) or \(String(describing: error))")
-                        if object != nil { //the object has a return value
-                            let resp2 : GTLRObservedtimes_RowTimePackageObservedTimeList = object as! GTLRObservedtimes_RowTimePackageObservedTimeList
-                            print ("resp2.times: \(String(describing: resp2.times))")
-                            if (resp2.lastTimestamp != nil){ viewController.lastTimestamp = (resp2.lastTimestamp?.stringValue)!}
-                            if (error == nil && resp2.times != nil) {
-                                //now we have the times we can process each one against the crews they belong to
-                            
-                                self.processTimes(resp2, crews: crews)
-                                viewController.crews = crews
-                            
-                                // create an Object to save to NSUserDefaults.  This has to be an NSData objects so convert my Crew object array to NSData
-                                let data : Data = NSKeyedArchiver.archivedData(withRootObject: crews)
-                                // save to NSUserDefaults with a key of the eventId, this is unique
-                                userDefaults.set(data, forKey: eventId)
-                                userDefaults.synchronize()
-                            }
-                        }
-                        viewController.tableView.reloadData()
-                    } )
-                }
+                    self.delegate?.didUpdateModel()
             } else { //object received was 'nil' and so no data returned
                 
             }
-
-        } )
-        sender.endRefreshing()
+          }
+        })
     }
+    
+    func refreshTimes(eventId: String) {
+            
+        // now we have the crews we can get the times
+        delegate?.willUpdateModel()
+        let timesquery = GTLRObservedtimesQuery_TimesListtimes.query()
+        timesquery.eventId = eventId
+        timesquery.lastTimestamp = lastTimestamp
+        
+        var service : GTLRObservedtimesService? = nil
+        if service == nil {
+            service = GTLRObservedtimesService()
+            service?.isRetryEnabled = true
+            service?.allowInsecureQueries = true
+        }
+        _ = service!.executeQuery(timesquery,
+                                  completionHandler:{
+                                    (ticket: GTLRServiceTicket?, object: Any?, error: Error?)-> Void in
+            print("Analytics: \(String(describing: object)) or \(String(describing: error))")
+            if object != nil { //the object has a return value
+                let resp2 : GTLRObservedtimes_RowTimePackageObservedTimeList = object as! GTLRObservedtimes_RowTimePackageObservedTimeList
+                print ("resp2.times: \(String(describing: resp2.times))")
+                if (resp2.lastTimestamp != nil){ self.lastTimestamp = (resp2.lastTimestamp?.stringValue)!}
+                if (error == nil && resp2.times != nil) {
+                    //now we have the times we can process each one against the crews they belong to
+                    
+                    self.processTimes(resp2, crews: self.crews)
+                    
+                }
+            }
+            self.delegate?.didUpdateModel()
+        } )
+    }
+
 
     func processTimes(_ times: GTLRObservedtimes_RowTimePackageObservedTimeList, crews: [Crew]) {
         

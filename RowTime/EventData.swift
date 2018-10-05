@@ -31,6 +31,9 @@ class EventData: NSObject {
         // get user defaults to store the event list in
         let userDefaults = UserDefaults.standard
         
+        //empty the events array
+        events = []
+        
         // connect to the backend service for rowtime-26 using the Google App Engine Library
         
         let service = GTLRObservedtimesService()
@@ -46,7 +49,7 @@ class EventData: NSObject {
                 let resp = object as! GTLRObservedtimes_RowTimePackageEventList
                 if resp.events != nil {
                     for event in resp.events! {
-                        self?.events.append(Event(fromServerEvent: event ))
+                        self!.events.append(Event(fromServerEvent: event ))
                     }
                     print ("resp.events: \(String(describing: resp.events))")
                     
@@ -56,11 +59,11 @@ class EventData: NSObject {
                     userDefaults.synchronize()
                 } else { //there were no events so take from local data
                     let data = userDefaults.object(forKey: "Events") as! Data
-                    self?.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
+                    self!.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
                 }
             } else { //object returned is nil - no events returned from the server but no error so take from local data
                 let data = userDefaults.object(forKey: "Events") as! Data
-                self?.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
+                self!.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
             }
             self!.delegate?.didUpdateModel()
         })

@@ -4,7 +4,6 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment version="4352" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
@@ -37,16 +36,16 @@
                                             </constraints>
                                         </imageView>
                                         <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" semanticContentAttribute="forceRightToLeft" axis="vertical" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="hD2-jL-Lsf">
-                                            <rect key="frame" x="302" y="7" width="65" height="74"/>
+                                            <rect key="frame" x="302.33333333333331" y="8" width="64.666666666666686" height="73"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="WIM3.8x+" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="shj-Yi-WoT">
-                                                    <rect key="frame" x="0.0" y="0.0" width="64.666666666666671" height="32.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="64.666666666666671" height="32.666666666666664"/>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="mm:ss.ttt" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="none" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="twK-r8-EOE">
-                                                    <rect key="frame" x="0.0" y="40.333333333333329" width="64.666666666666671" height="32.333333333333329"/>
+                                                    <rect key="frame" x="0.0" y="40.666666666666657" width="64.666666666666671" height="32.333333333333343"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -55,16 +54,16 @@
                                             </subviews>
                                         </stackView>
                                         <stackView opaque="NO" contentMode="scaleToFill" semanticContentAttribute="forceLeftToRight" axis="vertical" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="aGK-Ti-sD2">
-                                            <rect key="frame" x="89" y="9" width="205" height="72"/>
+                                            <rect key="frame" x="89.000000000000014" y="8" width="205.33333333333337" height="73"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Crew Number" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7GO-L1-BxF">
-                                                    <rect key="frame" x="0.0" y="0.0" width="205.33333333333334" height="32"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="205.33333333333334" height="32.666666666666664"/>
                                                     <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="14"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Name of Crew as much space as I can put" lineBreakMode="characterWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c6d-Hq-gYL">
-                                                    <rect key="frame" x="0.0" y="40" width="205.33333333333334" height="32"/>
+                                                    <rect key="frame" x="0.0" y="40.666666666666657" width="205.33333333333334" height="32.333333333333343"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -204,7 +203,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Rower Name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="P2W-Bx-ZpH">
-                                                    <rect key="frame" x="8" y="8" width="780" height="30"/>
+                                                    <rect key="frame" x="15" y="11" width="329" height="30"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -263,7 +262,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="852" y="1427"/>
+            <point key="canvasLocation" x="908" y="1427"/>
         </scene>
         <!--Rowing Events-->
         <scene sceneID="Ooa-gK-CsI">
@@ -368,17 +367,16 @@
                             </fragment>
                         </attributedString>
                         <connections>
-                            <action selector="refreshControl:" destination="a4M-V9-5A4" eventType="valueChanged" id="tgP-r1-EH5"/>
+                            <action selector="refreshController:" destination="a4M-V9-5A4" eventType="valueChanged" id="yXi-Fj-unP"/>
                         </connections>
                     </refreshControl>
                     <connections>
-                        <outlet property="refreshControl" destination="xcb-sv-7Wv" id="Xab-vG-GTV"/>
-                        <outlet property="refreshMarker" destination="xcb-sv-7Wv" id="zGg-gJ-7tI"/>
+                        <outlet property="refreshMarker" destination="xcb-sv-7Wv" id="NOq-oY-oYp"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DdX-Zu-sdb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-437" y="454"/>
+            <point key="canvasLocation" x="-492" y="454"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="9YY-x7-t3N">
@@ -398,7 +396,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wiF-na-CCN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="852" y="454"/>
+            <point key="canvasLocation" x="908" y="454"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="gUo-3d-7l9">
@@ -425,7 +423,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cw1-6n-5ej" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1057" y="454"/>
+            <point key="canvasLocation" x="-1250" y="454"/>
         </scene>
         <!--Record a Time-->
         <scene sceneID="0FK-Vk-2z0">

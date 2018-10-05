@@ -53,7 +53,7 @@ class TimerViewController: UIViewController, UITextFieldDelegate, UITableViewDat
         // Do any additional setup after loading the view.
     }
     
-    func updateTime(){
+    @objc func updateTime(){
         //set the readout to the curent time
         let timeFormatForReadout = DateFormatter()
         timeFormatForReadout.dateFormat = "HH:mm:ss"
@@ -157,7 +157,7 @@ class TimerViewController: UIViewController, UITextFieldDelegate, UITableViewDat
         
     }
     
-    func textFieldTextChanged (_ notification: Notification) {
+    @objc func textFieldTextChanged (_ notification: Notification) {
         
         let textField = notification.object as! UITextField
         

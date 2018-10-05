@@ -9,44 +9,43 @@
 import UIKit
 import CoreData
 
-class CrewTableViewController: UITableViewController, UISearchResultsUpdating {
+class CrewTableViewController: UITableViewController, UISearchResultsUpdating, UpdateableFromModel{
+
+    
     
     // MARK: Properties
     
     var event: Event  = Event(fromNil: nil)!
-    var crews = [Crew]()
+   // var crews = [Crew]() //TODO - not sure I need this
     var filteredCrews = [Crew]()
     var times = GTLRObservedtimes_RowTimePackageObservedTimeList()
-    var lastTimestamp = "1990-01-01T00:00:00.000"  //first time set ot old date to get everything
     var eventId = ""
     var filterOn: Bool = false
 
-    var searchController: UISearchController!
+    var searchController = UISearchController.init(searchResultsController: nil)
     
     let crewData: CrewData = CrewData()
 
     override func viewDidLoad() {
         
         super.viewDidLoad()
-
-        // Set up the search controller
+        crewData.delegate = self
         
-        self.searchController = UISearchController.init(searchResultsController: nil)
-        self.searchController.dimsBackgroundDuringPresentation = false
-        self.searchController.obscuresBackgroundDuringPresentation = false
-        self.searchController.searchResultsUpdater = self
-        self.searchController.hidesNavigationBarDuringPresentation = false;
-        self.searchController.searchBar.sizeToFit()
-        self.tableView.tableHeaderView = self.searchController?.searchBar;
-        //self.searchController?.delegate = self
-        //self.tableView.delegate = self
-        self.definesPresentationContext = true
+        // Set up the search controller
 
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchResultsUpdater = self
+        searchController.hidesNavigationBarDuringPresentation = false;
+        searchController.searchBar.sizeToFit()
+        searchController.delegate = self as? UISearchControllerDelegate
+        
+        tableView.tableHeaderView = searchController.searchBar;
+        tableView.delegate = self
+        
+        definesPresentationContext = true
 
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        //self.navigationItem.rightBarButtonItem = self.editButtonItem()
-
-        crewData.initialLoad(self, eventId: self.eventId)
+        crewData.initialLoad(eventId: self.eventId)
     }
 
 
@@ -75,7 +74,7 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating {
                 }
             }
             
-            filteredCrews = crews.filter(searchFilter)
+            filteredCrews = crewData.crews.filter(searchFilter)
             
         } else {
             filterOn = false
@@ -100,7 +99,7 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating {
         if filterOn{
             return filteredCrews.count
         } else {
-            return crews.count
+            return crewData.crews.count
         }
     }
 
@@ -111,7 +110,7 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CrewTableViewCell
         
         // Fetches the appropriate crew for the data source layout.
-        var crew = crews[(indexPath as NSIndexPath).row]
+        var crew = crewData.crews[(indexPath as NSIndexPath).row]
         if filterOn {
             crew = filteredCrews[(indexPath as NSIndexPath).row]
         }
@@ -177,7 +176,7 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating {
                 if filterOn {
                     timerViewController.crew = filteredCrews[(indexPath as NSIndexPath).row]
                 } else {
-                    timerViewController.crew = crews[(indexPath as NSIndexPath).row]
+                    timerViewController.crew = crewData.crews[(indexPath as NSIndexPath).row]
                 }
 
                 timerViewController.readOnly = true
@@ -191,8 +190,8 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating {
             if let sourceViewController = sender.source as?CrewViewController, let crew = sourceViewController.crew{
                 
                 // Add a new crew.
-                let newIndexPath = IndexPath(row: crews.count, section: 0)
-                crews.append(crew)
+                let newIndexPath = IndexPath(row: crewData.crews.count, section: 0)
+                crewData.crews.append(crew)
                 tableView.insertRows(at: [newIndexPath], with: .bottom)
             }
         }
@@ -202,18 +201,26 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating {
         
         //refresh the crew data by using the crewData object and calling its refresh method
         
-        crewData.refresh(self, eventId: self.eventId, sender: sender)
-        
+        UpdateFromModel()
     }
     
     private func UpdateFromModel(){
-        //TODO PV a method to update the data on the screen from the model crewdata model.
-        crewData.refresh(self, eventId: self.eventId, sender: self.refreshControl!)
+        //a method to update the data on the screen from the model crewdata model.
+        crewData.refreshTimes(eventId: self.eventId)
     }
     
     @IBAction func Sort(_ sender: UIBarButtonItem) {
         // var menustyle = UIAlertActionStyle(rawValue: 1)
         // let menu = UIAlertAction(title: "menu", style: menustyle!, handler: <#T##((UIAlertAction) -> Void)?##((UIAlertAction) -> Void)?##(UIAlertAction) -> Void#>)
+    }
+    
+    func didUpdateModel() {
+        tableView.reloadData()
+        refreshControl?.endRefreshing()
+    }
+    
+    func willUpdateModel() {
+        refreshControl?.beginRefreshing()
     }
 }
 

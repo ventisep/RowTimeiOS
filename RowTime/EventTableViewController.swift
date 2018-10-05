@@ -69,6 +69,7 @@ class EventTableViewController: UITableViewController, UpdateableFromModel {
     // MARK: Add Button
 
     @IBAction func pressedAddButton(_ sender: AnyObject) {
+        
     }
     /*
     // Override to support conditional editing of the table view.
@@ -133,23 +134,23 @@ class EventTableViewController: UITableViewController, UpdateableFromModel {
         // Pass the selected object to the new view controller.
     }
     
-    
     @IBOutlet weak var refreshMarker: UIRefreshControl!
-    @IBAction func refreshControl(_ sender: Any) {
-
+    @IBAction func refreshController(_ sender: Any) {
         eventData.loadEvents()
-        
     }
     
     func willUpdateModel(){
         //called by EventData when it is abbout to update the list of events
+        print("got to willupdatemodel")
         refreshMarker.beginRefreshing()
+
     }
     
     func didUpdateModel(){
         //called by EventData when it has new data to provide
         self.tableView.reloadData()
         refreshMarker.endRefreshing()
+
     }
 
 }
