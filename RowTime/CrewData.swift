@@ -12,13 +12,18 @@ import CoreData
 
 class CrewData: NSObject {
     
-    var status: String = "error"
-    var errorNumber: Int = 0
+    var status = ""
     var crews: [Crew] = []
+    var eventId: String? = nil
     var delegate: UpdateableFromModel?
-    var lastTimestamp: String = "1990-01-01T00:00:00.000"  //first time set ot old date to get everything
+    var lastTimestamp: String = "1990-01-01T00:00:00.000"  //first time set to old date to get everything
+    var service : GTLRObservedtimesService? = nil
     
-    func initialLoad(eventId: String) {
+    func initialLoad(newEventId: String) {
+        
+        //set the eventId to the newEventId and then process an update of the model
+        
+        eventId = newEventId
         
         //PV: This method will get data from CoreData store if available and then
         // update it with data from the backend if there is a connection
@@ -31,7 +36,7 @@ class CrewData: NSObject {
         // read all the crews for the selected event from CoreData if nil then set status
         // to "no local data"
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName : "CDCrew")
-        let querystring = "event.eventId ='"+eventId+"'"
+        let querystring = "event.eventId ='"+eventId!+"'"
         fetchRequest.predicate = NSPredicate(format: querystring)
         do {
             crews = try managedContext.fetch(fetchRequest) as! [Crew]
@@ -41,7 +46,7 @@ class CrewData: NSObject {
 
         if crews == [] {
             status = "no local data"
-            refreshCrews(eventId: eventId)
+            refreshCrews()
         }
     
     }
@@ -51,10 +56,10 @@ class CrewData: NSObject {
     // times since the last request.  Crew are only retrieved the first time (this means we cannot add crews
     // half way through the race.  To change this we would have to put a lastTimestamp on the crew table.
     
-    func refreshCrews(eventId: String) {
+    func refreshCrews() {
         
         delegate?.willUpdateModel()
-        var service : GTLRObservedtimesService? = nil
+        status = "updating crews"
         if service == nil {
             service = GTLRObservedtimesService()
             service?.isRetryEnabled = true
@@ -77,10 +82,11 @@ class CrewData: NSObject {
 
                     for GLTCrew in resp.crews! {
                         print("Crew as GTL: \(GLTCrew)")
-                        let crew = Crew(fromServerCrew: GLTCrew , eventId: eventId)
+                        let crew = Crew(fromServerCrew: GLTCrew , eventId: resp.eventId!)
                         self.crews.append(crew)
                     }
                     self.delegate?.didUpdateModel()
+                    self.refreshTimes()
             } else { //object received was 'nil' and so no data returned
                 
             }
@@ -88,15 +94,14 @@ class CrewData: NSObject {
         })
     }
     
-    func refreshTimes(eventId: String) {
+    func refreshTimes() {
             
         // now we have the crews we can get the times
         delegate?.willUpdateModel()
         let timesquery = GTLRObservedtimesQuery_TimesListtimes.query()
-        timesquery.eventId = eventId
+        timesquery.eventId = eventId!
         timesquery.lastTimestamp = lastTimestamp
         
-        var service : GTLRObservedtimesService? = nil
         if service == nil {
             service = GTLRObservedtimesService()
             service?.isRetryEnabled = true
@@ -109,7 +114,9 @@ class CrewData: NSObject {
             if object != nil { //the object has a return value
                 let resp2 : GTLRObservedtimes_RowTimePackageObservedTimeList = object as! GTLRObservedtimes_RowTimePackageObservedTimeList
                 print ("resp2.times: \(String(describing: resp2.times))")
-                if (resp2.lastTimestamp != nil){ self.lastTimestamp = (resp2.lastTimestamp?.stringValue)!}
+                //get the last timestamp.  to ensure we preserve the full 6 digit accuracy we get this from the original JSON message rather than the GTLDateTime contruct which both rounds to 3 decimal places and puts a "z" at the end which is not the string format the API needs
+                if (resp2.lastTimestamp != nil){ self.lastTimestamp = resp2.jsonValue(forKey: "last_timestamp") as! String
+                }
                 if (error == nil && resp2.times != nil) {
                     //now we have the times we can process each one against the crews they belong to
                     
@@ -128,7 +135,7 @@ class CrewData: NSObject {
             
             // find the crewnumber that matches time.crewNumber and process the time
             
-            for crew in crews where crew.crewNumber == Int(time.crew!) {
+            for crew in crews where crew.crewNumber == Int(truncating: time.crew!) {
                 crew.processTime(time)
             }
         }

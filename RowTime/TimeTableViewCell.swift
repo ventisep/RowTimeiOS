@@ -24,7 +24,7 @@ class TimeTableViewCell: UITableViewCell, UITextFieldDelegate {
         // Initialization code
         
         crewNumberInput.delegate = self
-        print (" print: \(times)")
+
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

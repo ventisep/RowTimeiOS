@@ -13,22 +13,30 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating, U
 
     
     
-    // MARK: Properties
+    // MARK: Public Properties
     
-    var event: Event  = Event(fromNil: nil)!
-   // var crews = [Crew]() //TODO - not sure I need this
-    var filteredCrews = [Crew]()
-    var times = GTLRObservedtimes_RowTimePackageObservedTimeList()
+    var event: Event?  = nil
     var eventId = ""
-    var filterOn: Bool = false
-
-    var searchController = UISearchController.init(searchResultsController: nil)
-    
     let crewData: CrewData = CrewData()
+    var times = GTLRObservedtimes_RowTimePackageObservedTimeList()
+    
+    //TODO: incorporate selected event into the CrewData class so that it is initialised with a selected event and when that is changed then the crews are refreshed.  this will make the model self contained rather than having the event and eventid sitting outside on its own. and should also take timeslist and incorporate these into the crewdata.
+    
+    // MARK: Private Properties
+    
+    private var filteredCrews = [Crew]()
+    private var filterOn: Bool = false
+    private let searchController = UISearchController.init(searchResultsController: nil) //searchResultsController nil if you want to display the search results in the same view controller that displays your searchable content.
+    
 
+    //MARK: Public Functions
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        // set up the crewData datamodel delegate
+        
         crewData.delegate = self
         
         // Set up the search controller
@@ -45,17 +53,17 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating, U
         
         definesPresentationContext = true
 
-        crewData.initialLoad(eventId: self.eventId)
+        crewData.initialLoad(newEventId: self.eventId)
     }
 
-
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    @IBAction func RefreshControl(_ sender: UIRefreshControl, forEvent event: UIEvent) {
+        
+        //refresh the crew data by using the crewData object and calling its refresh method
+        
+        UpdateFromModel()
     }
     
-    //MARK: UISearchResultsUpdating protocol conformance
+    //MARK: - UISearchResultsUpdating protocol conformance
     
     func updateSearchResults(for searchController: UISearchController) {
         
@@ -187,7 +195,7 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating, U
     
     @IBAction func unwindToCrewList(_ sender: UIStoryboardSegue){
         if sender.identifier == "addCrew" {
-            if let sourceViewController = sender.source as?CrewViewController, let crew = sourceViewController.crew{
+            if let sourceViewController = sender.source as? CrewViewController, let crew = sourceViewController.crew {
                 
                 // Add a new crew.
                 let newIndexPath = IndexPath(row: crewData.crews.count, section: 0)
@@ -197,16 +205,13 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating, U
         }
     }
     
-    @IBAction func RefreshControl(_ sender: UIRefreshControl, forEvent event: UIEvent) {
-        
-        //refresh the crew data by using the crewData object and calling its refresh method
-        
-        UpdateFromModel()
-    }
+    // MARK: - update from model
+    
+
     
     private func UpdateFromModel(){
         //a method to update the data on the screen from the model crewdata model.
-        crewData.refreshTimes(eventId: self.eventId)
+        crewData.refreshTimes()
     }
     
     @IBAction func Sort(_ sender: UIBarButtonItem) {

@@ -1,0 +1,78 @@
+
+/* Class = "UILabel"; text = "12:11:03.600"; ObjectID = "0Jd-O9-bzo"; */
+"0Jd-O9-bzo.text" = "12:11:03.600";
+
+/* Class = "UITextField"; placeholder = "Crew Number"; ObjectID = "0pw-Rj-Vzx"; */
+"0pw-Rj-Vzx.placeholder" = "Crew Number";
+
+/* Class = "UILabel"; text = "Crew Number"; ObjectID = "7GO-L1-BxF"; */
+"7GO-L1-BxF.text" = "Crew Number";
+
+/* Class = "UITextField"; placeholder = "Enter Crew Name"; ObjectID = "O91-C1-EwS"; */
+"O91-C1-EwS.placeholder" = "Enter Crew Name";
+
+/* Class = "UITextField"; text = "enter crew name"; ObjectID = "O91-C1-EwS"; */
+"O91-C1-EwS.text" = "enter crew name";
+
+/* Class = "UILabel"; text = "12:13:02.12"; ObjectID = "OoT-5z-77n"; */
+"OoT-5z-77n.text" = "12:13:02.12";
+
+/* Class = "UITextField"; placeholder = "Rower Name"; ObjectID = "P2W-Bx-ZpH"; */
+"P2W-Bx-ZpH.placeholder" = "Rower Name";
+
+/* Class = "UILabel"; text = "Crew Name - goes over 2 lines if required"; ObjectID = "VR5-ZA-vA6"; */
+"VR5-ZA-vA6.text" = "Crew Name - goes over 2 lines if required";
+
+/* Class = "UILabel"; text = "Short Description"; ObjectID = "ViQ-G1-U08"; */
+"ViQ-G1-U08.text" = "Short Description";
+
+/* Class = "UILabel"; text = "Started @"; ObjectID = "bd5-6f-KRb"; */
+"bd5-6f-KRb.text" = "Started @";
+
+/* Class = "UILabel"; text = "Name of Crew as much space as I can put"; ObjectID = "c6d-Hq-gYL"; */
+"c6d-Hq-gYL.text" = "Name of Crew as much space as I can put";
+
+/* Class = "UINavigationItem"; title = "Add Crews for this Event"; ObjectID = "cU3-X4-eNa"; */
+"cU3-X4-eNa.title" = "Add Crews for this Event";
+
+/* Class = "UILabel"; text = "Crew number"; ObjectID = "cZb-zE-fRe"; */
+"cZb-zE-fRe.text" = "Crew number";
+
+/* Class = "UITextField"; placeholder = "Scheduled Time"; ObjectID = "d7a-TW-3oH"; */
+"d7a-TW-3oH.placeholder" = "Scheduled Time";
+
+/* Class = "UILabel"; text = "Event Name"; ObjectID = "kIw-S0-dM2"; */
+"kIw-S0-dM2.text" = "Event Name";
+
+/* Class = "UINavigationItem"; title = "Record a Time"; ObjectID = "lcL-9R-Tcp"; */
+"lcL-9R-Tcp.title" = "Record a Time";
+
+/* Class = "UITabBarItem"; title = "Crews"; ObjectID = "nJK-ex-1Yh"; */
+"nJK-ex-1Yh.title" = "Crews";
+
+/* Class = "UINavigationItem"; title = "Crews"; ObjectID = "p1Z-Js-dsu"; */
+"p1Z-Js-dsu.title" = "Crews";
+
+/* Class = "UIBarButtonItem"; title = "back"; ObjectID = "pHr-kl-dBJ"; */
+"pHr-kl-dBJ.title" = "back";
+
+/* Class = "UINavigationItem"; title = "Rowing Events"; ObjectID = "q0J-N6-aGS"; */
+"q0J-N6-aGS.title" = "Rowing Events";
+
+/* Class = "UIButton"; normalTitle = "Record Time"; ObjectID = "raJ-O8-AwG"; */
+"raJ-O8-AwG.normalTitle" = "Record Time";
+
+/* Class = "UILabel"; text = "WIM3.8x+"; ObjectID = "shj-Yi-WoT"; */
+"shj-Yi-WoT.text" = "WIM3.8x+";
+
+/* Class = "UIBarButtonItem"; title = "Sort"; ObjectID = "slY-CD-6zg"; */
+"slY-CD-6zg.title" = "Sort";
+
+/* Class = "UILabel"; text = "mm:ss.ttt"; ObjectID = "twK-r8-EOE"; */
+"twK-r8-EOE.text" = "mm:ss.ttt";
+
+/* Class = "UILabel"; text = "Date of Event"; ObjectID = "vHi-JQ-gIT"; */
+"vHi-JQ-gIT.text" = "Date of Event";
+
+/* Class = "UITextField"; placeholder = "Crew Number"; ObjectID = "vyz-jZ-YhV"; */
+"vyz-jZ-YhV.placeholder" = "Crew Number";

@@ -90,6 +90,7 @@ class TimerViewController: UIViewController, UITextFieldDelegate, UITableViewDat
         
         //get the time record assigned to this cell
         let time = times[(indexPath as NSIndexPath).row]
+        //print (" print: \(String(describing: time))")
         
         //update the cell properties using the times array
         
