@@ -13,11 +13,13 @@ class CrewTableViewCell: UITableViewCell {
     // MARK: Properties
     
 
-    @IBOutlet weak var crewNumber: UILabel!
     @IBOutlet weak var crewName: UILabel!
     @IBOutlet weak var crewOarImage: UIImageView!
     @IBOutlet weak var crewCategory: UILabel!
+    @IBOutlet weak var startTime: UILabel!
+    @IBOutlet weak var stopTime: UILabel!
     @IBOutlet weak var crewTime: UILabel!
+    @IBOutlet weak var crewNumber: UILabel!
     
 
     override func awakeFromNib() {

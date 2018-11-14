@@ -12,14 +12,22 @@ import CoreData
 
 class CrewData: NSObject {
     
-    var status = ""
+    enum Status {
+        case empty, noLocalData, updatingCrewsFromRemoteServer, usingLocalData, usingRemoteData
+    }
+    var status: Status = .empty
     var crews: [Crew] = []
-    var eventId: String? = nil
-    var delegate: UpdateableFromModel?
-    var lastTimestamp: String = "1990-01-01T00:00:00.000"  //first time set to old date to get everything
-    var service : GTLRObservedtimesService? = nil
+    var delegate: UpdateableFromModel? = nil
+
+    private var eventId: String? = nil
+    private var cdEvent: CDEvent? = nil
+    private var lastTimestamp: String = "1990-01-01T00:00:00.000"  //first time set to old date to get everything
+    private var service : GTLRObservedtimesService? = nil
+    private let appDelegate = UIApplication.shared.delegate as! AppDelegate
+
     
-    func initialLoad(newEventId: String) {
+    
+    func setEvent(newEventId: String) {
         
         //set the eventId to the newEventId and then process an update of the model
         
@@ -27,11 +35,8 @@ class CrewData: NSObject {
         
         //PV: This method will get data from CoreData store if available and then
         // update it with data from the backend if there is a connection
-        
-        // first get the managed object context
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
         let managedContext = appDelegate.managedObjectContext
-
  
         // read all the crews for the selected event from CoreData if nil then set status
         // to "no local data"
@@ -40,12 +45,12 @@ class CrewData: NSObject {
         fetchRequest.predicate = NSPredicate(format: querystring)
         do {
             crews = try managedContext.fetch(fetchRequest) as! [Crew]
+            if crews.count == 0 {
+                self.status = .noLocalData
+                refreshCrews()
+            }
         } catch {
-            self.status = "no local data"
-        }
-
-        if crews == [] {
-            status = "no local data"
+            self.status = .noLocalData
             refreshCrews()
         }
     
@@ -58,8 +63,9 @@ class CrewData: NSObject {
     
     func refreshCrews() {
         
-        delegate?.willUpdateModel()
-        status = "updating crews"
+        delegate?.willUpdateModel() //tell the delegate that the model is about to be updated
+        
+        status = .updatingCrewsFromRemoteServer
         if service == nil {
             service = GTLRObservedtimesService()
             service?.isRetryEnabled = true
@@ -80,9 +86,10 @@ class CrewData: NSObject {
                 if (error == nil && resp.crews != nil) {
                     //got the list now create array of Crew objects
 
-                    for GLTCrew in resp.crews! {
-                        print("Crew as GTL: \(GLTCrew)")
-                        let crew = Crew(fromServerCrew: GLTCrew , eventId: resp.eventId!)
+                    for GLTRCrew in resp.crews! {
+                        print("Crew as GTL: \(GLTRCrew)")
+                        let crew = Crew(fromServerCrew: GLTRCrew , eventId: resp.eventId!)
+                        self.updateLocalCrew(fromServerCrew: GLTRCrew, event: self.cdEvent )
                         self.crews.append(crew)
                     }
                     self.delegate?.didUpdateModel()
@@ -124,7 +131,7 @@ class CrewData: NSObject {
                     
                 }
             }
-            self.delegate?.didUpdateModel()
+            self.delegate?.didUpdateModel() //tell the delegate that the model was updated
         } )
     }
 
@@ -140,5 +147,54 @@ class CrewData: NSObject {
             }
         }
     }
+    
+    func updateLocalCrew(fromServerCrew: GTLRObservedtimes_RowTimePackageCrew, event: CDEvent? ) {
+        //TODO: figure out how to get a CDEvent for the crews.
+    /*
+        let managedContext = appDelegate.managedObjectContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName : "CDCrew")
+        let querystring = "eventId ='"+event.eventId!+"'"
+        fetchRequest.predicate = NSPredicate(format: querystring)
+
+        do {
+            if let cdCrews = try managedContext.fetch(fetchRequest) as? [CDCrew] {
+                //check to see if any crews were found
+                if cdCrews.count >= 1 {
+                    //found one so no need to replace
+                    if cdCrews.count == 1 {
+                        print("crew already in database")
+                        
+                    }else{
+                        print("error 20")
+                    }
+                } else {
+                    //none there so insert
+                    print("can insert here")
+                    let eventRecordDef = NSEntityDescription.entity(forEntityName: "CDEvent", in: managedContext)
+                    let newEvent = NSManagedObject(entity: eventRecordDef!, insertInto: managedContext) as! CDEvent
+                    //newEvent.setValue(event.eventId, forKey: "eventId")
+                    newEvent.eventId = event.eventId
+                    newEvent.eventDesc = event.eventDesc
+                    newEvent.eventDate = event.eventDate
+                    newEvent.eventName = event.eventName
+                    do {
+                        try managedContext.save()
+                    } catch {
+                        print("Failed saving")
+                    }
+                }
+            }
+        } catch {
+            //catch error
+            print("error 10")
+        }
+        
+        //TODO: if the server had deleted an event then consider how to deal with this.. there is no way to delete at the moment.
+        
+    }
+    */
+    }
+ 
 }
 

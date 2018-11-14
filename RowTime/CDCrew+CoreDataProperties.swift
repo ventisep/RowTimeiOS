@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-
 extension CDCrew {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<CDCrew> {
@@ -33,6 +32,8 @@ extension CDCrew {
     @NSManaged public var times: NSOrderedSet?
 
 }
+
+
 
 // MARK: Generated accessors for rowers
 extension CDCrew {

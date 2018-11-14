@@ -22,14 +22,47 @@ protocol UpdateableFromModel {
 
 class EventData: NSObject {
     
-    var events : [Event] = [Event]()
-    var delegate : UpdateableFromModel?
+    var events = [Event]()
+    var status: Status? = nil
+    enum Status {
+        case empty, noLocalData, updatingCrewsFromRemoteServer, usingLocalData, usingRemoteData
+    }
+    var delegate : UpdateableFromModel? = nil
+    private let appDelegate = UIApplication.shared.delegate as! AppDelegate
 
     func loadEvents() {
-        //PV: a method for loading Events from the internet server if available
-        // if not successful it will set the status to .
-        // get user defaults to store the event list in
-        let userDefaults = UserDefaults.standard
+        //PV: a method for loading Events from the local store.  If there is no local data then it will load from the internet and store in the local data store
+
+        
+        let managedContext = appDelegate.managedObjectContext
+        
+        
+        // read all the events from CoreData if nil then set status
+        // to "no local data"
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName : "CDEvent")
+        
+        do {
+            if let cdEvents = try managedContext.fetch(fetchRequest) as? [CDEvent] {
+                //got events so convert to datamodel format
+                //TODO: should not be needed to convert if I use the core data for datamodel
+                for event in cdEvents {
+                    events.append(Event(fromCoreData: event))
+                    self.status = .usingLocalData
+                }
+                if events.count == 0 {
+                    self.status = .noLocalData
+                }
+            } // else the cdEvents returns nul - what to do here?
+            
+        } catch {
+            self.status = .noLocalData
+        }
+        if status == .noLocalData {
+            refreshEvents()
+        }
+    }
+    
+    func refreshEvents() {
         
         //empty the events array
         events = []
@@ -41,32 +74,77 @@ class EventData: NSObject {
         service.allowInsecureQueries = true
         
         let query = GTLRObservedtimesQuery_EventList.query()
-
-        service.executeQuery(query, completionHandler: {[weak self] (ticket: GTLRServiceTicket?, object: Any?, error: Error?) -> Void in
+        delegate?.willUpdateModel()
+        
+        service.executeQuery(query,
+                             completionHandler: {[weak self]
+            (ticket: GTLRServiceTicket?,
+                        object: Any?,
+                        error: Error?) -> Void in
+                
             print("Analytics: \(object ?? String(describing:error))")
-            self!.delegate?.willUpdateModel()
+
             if object != nil, error == nil {
                 let resp = object as! GTLRObservedtimes_RowTimePackageEventList
                 if resp.events != nil {
                     for event in resp.events! {
                         self!.events.append(Event(fromServerEvent: event ))
+                        self!.updateCoreData(fromServerEvent: event)
                     }
                     print ("resp.events: \(String(describing: resp.events))")
                     
-                    // Archive it to NSData
-                    let data = NSKeyedArchiver.archivedData(withRootObject: self!.events)
-                    userDefaults.set(data, forKey: "Events")
-                    userDefaults.synchronize()
-                } else { //there were no events so take from local data
-                    let data = userDefaults.object(forKey: "Events") as! Data
-                    self!.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
+            } else { //object returned successfully but there are no events
                 }
-            } else { //object returned is nil - no events returned from the server but no error so take from local data
-                let data = userDefaults.object(forKey: "Events") as! Data
-                self!.events = NSKeyedUnarchiver.unarchiveObject(with: data) as! [Event]
-            }
+            }//object returned was nil or an error in the call
+            
             self!.delegate?.didUpdateModel()
         })
+        
+    }
+    
+    func updateCoreData(fromServerEvent event: GTLRObservedtimes_RowTimePackageEvent) {
+        //if the event provided is already in Core Data then replace it with the new version retrieved from the server.
+        let managedContext = appDelegate.managedObjectContext
+
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName : "CDEvent")
+        let sortorder = NSSortDescriptor(key: "eventDate", ascending: false)
+        let querystring = "eventId ='"+event.eventId!+"'"
+        fetchRequest.predicate = NSPredicate(format: querystring)
+        fetchRequest.sortDescriptors = [sortorder]
+        do {
+            if let cdEvents = try managedContext.fetch(fetchRequest) as? [CDEvent] {
+                //check to see if any events were found
+                if cdEvents.count >= 1 {
+                    //found one so no need to replace
+                    if cdEvents.count == 1 {
+                        print("event already in database")
+                        
+                    }else{
+                        print("error 20")
+                    }
+                } else {
+                    //none there so insert
+                    print("can insert here")
+                    let eventRecordDef = NSEntityDescription.entity(forEntityName: "CDEvent", in: managedContext)
+                    let newEvent = NSManagedObject(entity: eventRecordDef!, insertInto: managedContext) as! CDEvent
+                    //newEvent.setValue(event.eventId, forKey: "eventId")
+                    newEvent.eventId = event.eventId
+                    newEvent.eventDesc = event.eventDesc
+                    newEvent.eventDate = event.eventDate
+                    newEvent.eventName = event.eventName
+                    do {
+                        try managedContext.save()
+                    } catch {
+                        print("Failed saving")
+                    }
+                }
+            }
+        } catch {
+            //catch error
+            print("error 10")
+        }
+
+        //TODO: if the server had deleted an event then consider how to deal with this.. there is no way to delete at the moment.
         
     }
     

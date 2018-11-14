@@ -17,7 +17,7 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating, U
     
     var event: Event?  = nil
     var eventId = ""
-    let crewData: CrewData = CrewData()
+    let crewData = CrewData()
     var times = GTLRObservedtimes_RowTimePackageObservedTimeList()
     
     //TODO: incorporate selected event into the CrewData class so that it is initialised with a selected event and when that is changed then the crews are refreshed.  this will make the model self contained rather than having the event and eventid sitting outside on its own. and should also take timeslist and incorporate these into the crewdata.
@@ -53,7 +53,7 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating, U
         
         definesPresentationContext = true
 
-        crewData.initialLoad(newEventId: self.eventId)
+        crewData.setEvent(newEventId: self.eventId)
     }
 
     @IBAction func RefreshControl(_ sender: UIRefreshControl, forEvent event: UIEvent) {
@@ -122,10 +122,24 @@ class CrewTableViewController: UITableViewController, UISearchResultsUpdating, U
         if filterOn {
             crew = filteredCrews[(indexPath as NSIndexPath).row]
         }
+        let timeFormat = DateFormatter()
+        timeFormat.dateFormat = "HH:mm:ss.S"
+        
         cell.crewName.text = crew.crewName
         cell.crewOarImage.image = UIImage(named: crew.picFile!)
         cell.crewCategory.text = crew.category
         cell.crewNumber.text = String(crew.crewNumber)
+        if crew.startTimeLocal != nil {
+            cell.startTime.text = timeFormat.string(from: crew.startTimeLocal!)
+        } else {
+            cell.startTime.text = "No time"
+        }
+        if crew.endTimeLocal != nil {
+            cell.stopTime.text = timeFormat.string(from: crew.endTimeLocal!)
+        }else {
+            cell.stopTime.text = "No time"
+        }
+
         cell.crewTime.text = crew.elapsedTime
 
         return cell
